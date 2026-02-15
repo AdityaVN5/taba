@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Navbar = () => {
@@ -7,30 +7,45 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="w-full px-6 py-4 flex items-center justify-between relative z-50">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-accent-yellow rounded-lg flex items-center justify-center shadow-lg shadow-accent-yellow/20">
-           <span className="font-bold text-black">T</span>
-        </div>
-        <span className="font-bold text-xl text-white tracking-tight">TADA</span>
+    <nav className="w-full px-8 py-6 flex items-center justify-between relative z-50">
+      {/* Logo */}
+      <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
+        <span className="font-bold text-2xl text-black tracking-tight">TABA.</span>
       </div>
 
-      {/* Desktop Menu */}
-      <div className="hidden md:flex items-center gap-8">
-        <a href="#features" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Features</a>
-        <a href="#testimonials" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Testimonials</a>
-        <a href="#pricing" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Pricing</a>
+      {/* Desktop Menu Pill */}
+      <div className="hidden md:flex items-center gap-1 p-1 bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-full border border-white/40 dark:border-white/20 shadow-sm">
+        <a href="/" className="text-sm font-medium text-black dark:text-white hover:opacity-60 transition-opacity px-4 py-2">
+            Home
+        </a>
+        <div className="flex items-center gap-1 cursor-pointer hover:opacity-60 transition-opacity px-4 py-2">
+            <span className="text-sm font-medium text-black dark:text-white">Features</span>
+            <ChevronDown size={14} className="text-black dark:text-white" />
+        </div>
+        <a href="#pricing" className="text-sm font-medium text-black dark:text-white hover:opacity-60 transition-opacity px-4 py-2">
+            Pricing
+        </a>
+        
+        <div className="w-[1px] h-4 bg-black/10 dark:bg-white/20 mx-2"></div>
+        
         <button 
           onClick={() => navigate('/login')}
-          className="text-sm font-bold text-black bg-white px-5 py-2.5 rounded-full hover:bg-accent-yellow transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          className="text-sm font-medium text-black dark:text-white hover:opacity-60 transition-opacity px-4 py-2"
         >
-          Login
+          Log in
+        </button>
+        
+        <button 
+          onClick={() => navigate('/login')}
+          className="text-sm font-bold text-white bg-black dark:bg-white dark:text-black px-6 py-2.5 rounded-full hover:opacity-90 transition-all shadow-sm"
+        >
+          Sign Up
         </button>
       </div>
 
       {/* Mobile Menu Button */}
       <button 
-        className="md:hidden text-white p-2"
+        className="md:hidden text-black dark:text-white p-2"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X /> : <Menu />}
@@ -38,18 +53,30 @@ export const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 bg-gray-900/95 backdrop-blur-lg p-6 flex flex-col gap-4 border-b border-white/10 animate-in fade-in slide-in-from-top-4">
-          <a href="#features" className="text-white/80 hover:text-white py-2">Features</a>
-          <a href="#testimonials" className="text-white/80 hover:text-white py-2">Testimonials</a>
-          <a href="#pricing" className="text-white/80 hover:text-white py-2">Pricing</a>
+        <div className="absolute top-full left-0 right-0 mx-6 mt-2 bg-white/90 dark:bg-gray-900/95 backdrop-blur-lg p-6 rounded-2xl flex flex-col gap-4 border border-gray-200 dark:border-white/10 shadow-xl animate-in fade-in slide-in-from-top-4 overflow-hidden">
+          <a href="/" className="text-black dark:text-white font-medium py-2 border-b border-gray-100 dark:border-white/5">Home</a>
+          <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-white/5">
+            <span className="text-black dark:text-white font-medium">Features</span>
+            <ChevronDown size={16} className="text-black dark:text-white" />
+          </div>
+          <a href="#pricing" className="text-black dark:text-white font-medium py-2 border-b border-gray-100 dark:border-white/5">Pricing</a>
           <button 
             onClick={() => {
               navigate('/login');
               setIsOpen(false);
             }}
-            className="w-full bg-accent-yellow text-black font-bold py-3 rounded-xl"
+            className="text-black dark:text-white font-medium py-2 text-left"
           >
-            Login
+            Log in
+          </button>
+          <button 
+            onClick={() => {
+              navigate('/login');
+              setIsOpen(false);
+            }}
+            className="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-3 rounded-xl shadow-lg"
+          >
+            Sign Up
           </button>
         </div>
       )}
