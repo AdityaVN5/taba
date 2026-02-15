@@ -269,10 +269,14 @@ export const TaskBoard: React.FC = () => {
                     icon: <Palette size={14} />, 
                     options: [
                         { label: 'Default', icon: <div className="w-3 h-3 rounded-full bg-white border border-gray-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: undefined }) },
-                        { label: 'Red', icon: <div className="w-3 h-3 rounded-full bg-red-50 border border-red-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#fef2f2' }) },
-                        { label: 'Blue', icon: <div className="w-3 h-3 rounded-full bg-blue-50 border border-blue-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#eff6ff' }) },
-                        { label: 'Green', icon: <div className="w-3 h-3 rounded-full bg-green-50 border border-green-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#f0fdf4' }) },
-                        { label: 'Yellow', icon: <div className="w-3 h-3 rounded-full bg-yellow-50 border border-yellow-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#fefce8' }) },
+                        { label: 'Soft Red', icon: <div className="w-3 h-3 rounded-full bg-red-50 border border-red-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#fef2f2' }) },
+                        { label: 'Soft Blue', icon: <div className="w-3 h-3 rounded-full bg-blue-50 border border-blue-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#eff6ff' }) },
+                        { label: 'Soft Green', icon: <div className="w-3 h-3 rounded-full bg-green-50 border border-green-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#f0fdf4' }) },
+                        { label: 'Soft Yellow', icon: <div className="w-3 h-3 rounded-full bg-yellow-50 border border-yellow-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#fefce8' }) },
+                        { label: 'Soft Purple', icon: <div className="w-3 h-3 rounded-full bg-purple-50 border border-purple-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#f5f3ff' }) },
+                        { label: 'Soft Orange', icon: <div className="w-3 h-3 rounded-full bg-orange-50 border border-orange-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#fff7ed' }) },
+                        { label: 'Soft Pink', icon: <div className="w-3 h-3 rounded-full bg-pink-50 border border-pink-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#fdf2f8' }) },
+                        { label: 'Soft Teal', icon: <div className="w-3 h-3 rounded-full bg-teal-50 border border-teal-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#f0fdfa' }) },
                     ]
                 },
                 { label: 'Delete Task', icon: <Trash2 size={14} />, color: 'text-red-500', onClick: () => handleDeleteTask(taskContextMenu.task.id) }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Tag, AlertCircle } from 'lucide-react';
+import { X, Calendar, Tag, AlertCircle, Plus } from 'lucide-react';
 import { useTaskStore, Task, TaskPriority, TaskStatus } from '../store/useTaskStore';
 
 interface TaskModalProps {
@@ -48,12 +48,17 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, taskToEdi
       return;
     }
 
+    const finalTags = [...tags];
+    if (tagInput.trim() && !finalTags.includes(tagInput.trim())) {
+      finalTags.push(tagInput.trim());
+    }
+
     const taskData = {
       title,
       description,
       priority,
       dueDate: dueDate ? new Date(dueDate).toISOString() : null,
-      tags,
+      tags: finalTags,
       status: taskToEdit ? taskToEdit.status : initialStatus,
     };
 
@@ -149,22 +154,37 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, taskToEdi
              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
              <div className="flex flex-wrap gap-2 mb-2">
                {tags.map((tag, i) => (
-                 <span key={i} className="px-2 py-1 bg-accent-yellow/20 text-accent-yellow text-xs rounded-full flex items-center gap-1">
+                 <span key={i} className="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-[11px] font-semibold rounded-md flex items-center gap-1.5 border border-gray-200 dark:border-gray-600">
                    {tag}
-                   <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500"><X size={12} /></button>
+                   <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500 transition-colors"><X size={12} /></button>
                  </span>
                ))}
              </div>
-             <div className="relative">
-                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleAddTag}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-accent-yellow focus:outline-none dark:text-white"
-                  placeholder="Type and press Enter to add tags"
-                />
+             <div className="relative flex gap-2">
+                <div className="relative flex-1">
+                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <input
+                      type="text"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={handleAddTag}
+                      className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-accent-yellow focus:outline-none dark:text-white"
+                      placeholder="Add a tag..."
+                    />
+                </div>
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+                            setTags([...tags, tagInput.trim()]);
+                            setTagInput('');
+                        }
+                    }}
+                    className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors text-gray-600 dark:text-gray-400"
+                >
+                    <Plus size={20} />
+                </button>
              </div>
           </div>
 
