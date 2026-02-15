@@ -2,8 +2,10 @@ import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
-import { SocialProof } from "./components/SocialProof";
+import { AboutSection } from "./components/AboutSection";
+import { Footer } from "./components/Footer";
 import { LoginPage } from "./components/LoginPage";
+import { SignupPage } from "./components/SignupPage";
 import { Dashboard } from "./components/Dashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Moon, Sun } from "lucide-react";
@@ -24,14 +26,15 @@ export default function App() {
       <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark' : ''}`}>
         <Routes>
           <Route path="/" element={
-            <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 transition-colors duration-300 bg-gray-50 dark:bg-black">
-               <div className="w-full max-w-[1600px] bg-white dark:bg-gray-900 rounded-[2rem] shadow-soft overflow-hidden relative transition-colors duration-300">
+            <div className="min-h-screen flex flex-col items-center justify-start p-4 sm:p-8 transition-colors duration-300 bg-gray-50 dark:bg-black overflow-y-auto">
+               <div className="w-full max-w-[1600px] bg-white dark:bg-gray-900 rounded-[2rem] shadow-soft overflow-hidden relative transition-colors duration-300 flex flex-col">
                   <div className="relative w-full h-auto min-h-[700px] rounded-[1.8rem] m-0 sm:m-2 bg-hero-gradient dark:bg-hero-gradient-dark flex flex-col items-center overflow-hidden transition-all duration-500">
                     <div className="absolute inset-0 pointer-events-none bg-pattern-dots bg-repeat opacity-100 mix-blend-multiply dark:mix-blend-soft-light"></div>
                     <Navbar />
                     <Hero />
                   </div>
-                  <SocialProof />
+                  <AboutSection />
+                  <Footer />
                </div>
             </div>
           } />
@@ -42,6 +45,17 @@ export default function App() {
                   <div className="relative w-full h-auto min-h-[700px] rounded-[1.8rem] m-0 sm:m-2 bg-hero-gradient dark:bg-hero-gradient-dark flex flex-col items-center overflow-hidden transition-all duration-500">
                     <div className="absolute inset-0 pointer-events-none bg-pattern-dots bg-repeat opacity-100 mix-blend-multiply dark:mix-blend-soft-light"></div>
                     <LoginPage />
+                  </div>
+               </div>
+            </div>
+          } />
+
+          <Route path="/signup" element={
+            <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 transition-colors duration-300 bg-gray-50 dark:bg-black">
+               <div className="w-full max-w-[1600px] bg-white dark:bg-gray-900 rounded-[2rem] shadow-soft overflow-hidden relative transition-colors duration-300">
+                  <div className="relative w-full h-auto min-h-[700px] rounded-[1.8rem] m-0 sm:m-2 bg-hero-gradient dark:bg-hero-gradient-dark flex flex-col items-center overflow-hidden transition-all duration-500">
+                    <div className="absolute inset-0 pointer-events-none bg-pattern-dots bg-repeat opacity-100 mix-blend-multiply dark:mix-blend-soft-light"></div>
+                    <SignupPage />
                   </div>
                </div>
             </div>

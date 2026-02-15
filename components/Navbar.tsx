@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Navbar = () => {
@@ -10,7 +10,7 @@ export const Navbar = () => {
     <nav className="w-full px-8 py-6 flex items-center justify-between relative z-50">
       {/* Logo */}
       <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
-        <span className="font-bold text-2xl text-black tracking-tight">TABA.</span>
+        <span className="font-bold text-2xl text-black dark:text-white tracking-tight">TABA.</span>
       </div>
 
       {/* Desktop Menu Pill */}
@@ -20,10 +20,9 @@ export const Navbar = () => {
         </a>
         <div className="flex items-center gap-1 cursor-pointer hover:opacity-60 transition-opacity px-4 py-2">
             <span className="text-sm font-medium text-black dark:text-white">Features</span>
-            <ChevronDown size={14} className="text-black dark:text-white" />
         </div>
-        <a href="#pricing" className="text-sm font-medium text-black dark:text-white hover:opacity-60 transition-opacity px-4 py-2">
-            Pricing
+        <a href="#docs" className="text-sm font-medium text-black dark:text-white hover:opacity-60 transition-opacity px-4 py-2">
+            Docs
         </a>
         
         <div className="w-[1px] h-4 bg-black/10 dark:bg-white/20 mx-2"></div>
@@ -36,7 +35,7 @@ export const Navbar = () => {
         </button>
         
         <button 
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/signup')}
           className="text-sm font-bold text-white bg-black dark:bg-white dark:text-black px-6 py-2.5 rounded-full hover:opacity-90 transition-all shadow-sm"
         >
           Sign Up
@@ -57,9 +56,8 @@ export const Navbar = () => {
           <a href="/" className="text-black dark:text-white font-medium py-2 border-b border-gray-100 dark:border-white/5">Home</a>
           <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-white/5">
             <span className="text-black dark:text-white font-medium">Features</span>
-            <ChevronDown size={16} className="text-black dark:text-white" />
           </div>
-          <a href="#pricing" className="text-black dark:text-white font-medium py-2 border-b border-gray-100 dark:border-white/5">Pricing</a>
+          <a href="#docs" className="text-black dark:text-white font-medium py-2 border-b border-gray-100 dark:border-white/5">Docs</a>
           <button 
             onClick={() => {
               navigate('/login');
@@ -71,7 +69,7 @@ export const Navbar = () => {
           </button>
           <button 
             onClick={() => {
-              navigate('/login');
+              navigate('/signup');
               setIsOpen(false);
             }}
             className="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-3 rounded-xl shadow-lg"
