@@ -1,58 +1,58 @@
 import React from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-interface NavbarProps {
-  onLoginClick?: () => void;
-}
+export const Navbar = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const navigate = useNavigate();
 
-export const Navbar: React.FC<NavbarProps> = ({ onLoginClick }) => {
   return (
-    <nav className="w-full max-w-5xl mt-6 sm:mt-8 px-4 relative z-20">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-        {/* Logo */}
-        <div className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white cursor-pointer" onClick={() => window.location.reload()}>
-          TABA.
+    <nav className="w-full px-6 py-4 flex items-center justify-between relative z-50">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 bg-accent-yellow rounded-lg flex items-center justify-center shadow-lg shadow-accent-yellow/20">
+           <span className="font-bold text-black">T</span>
         </div>
-
-        {/* Nav Links Container */}
-        <div className="glass-nav rounded-full px-2 py-1.5 flex items-center gap-1 sm:gap-2 shadow-sm transition-all duration-300">
-          <a
-            href="#"
-            className="px-4 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white transition-colors"
-          >
-            Home
-          </a>
-
-          <div className="relative group">
-            <button className="px-4 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white inline-flex items-center gap-1 transition-colors">
-              Features <ChevronDown size={16} />
-            </button>
-          </div>
-
-          <a
-            href="#"
-            className="px-4 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white transition-colors hidden sm:block"
-          >
-            Pricing
-          </a>
-
-          <span className="w-px h-5 bg-gray-400/30 mx-1 hidden sm:block"></span>
-
-          <button
-            onClick={onLoginClick}
-            className="px-4 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white transition-colors"
-          >
-            Log in
-          </button>
-
-          <a
-            href="#"
-            className="bg-primary hover:bg-black text-white dark:bg-white dark:text-black dark:hover:bg-gray-200 px-6 py-2.5 rounded-full text-sm font-semibold transition-all transform hover:scale-105 shadow-lg"
-          >
-            Sign Up
-          </a>
-        </div>
+        <span className="font-bold text-xl text-white tracking-tight">TADA</span>
       </div>
+
+      {/* Desktop Menu */}
+      <div className="hidden md:flex items-center gap-8">
+        <a href="#features" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Features</a>
+        <a href="#testimonials" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Testimonials</a>
+        <a href="#pricing" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Pricing</a>
+        <button 
+          onClick={() => navigate('/login')}
+          className="text-sm font-bold text-black bg-white px-5 py-2.5 rounded-full hover:bg-accent-yellow transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+        >
+          Login
+        </button>
+      </div>
+
+      {/* Mobile Menu Button */}
+      <button 
+        className="md:hidden text-white p-2"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? <X /> : <Menu />}
+      </button>
+
+      {/* Mobile Menu Overlay */}
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 bg-gray-900/95 backdrop-blur-lg p-6 flex flex-col gap-4 border-b border-white/10 animate-in fade-in slide-in-from-top-4">
+          <a href="#features" className="text-white/80 hover:text-white py-2">Features</a>
+          <a href="#testimonials" className="text-white/80 hover:text-white py-2">Testimonials</a>
+          <a href="#pricing" className="text-white/80 hover:text-white py-2">Pricing</a>
+          <button 
+            onClick={() => {
+              navigate('/login');
+              setIsOpen(false);
+            }}
+            className="w-full bg-accent-yellow text-black font-bold py-3 rounded-xl"
+          >
+            Login
+          </button>
+        </div>
+      )}
     </nav>
   );
 };
