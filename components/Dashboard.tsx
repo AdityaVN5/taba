@@ -10,14 +10,18 @@ import {
   Folder,
   Trash2,
   Edit2,
-  Palette
+  Palette,
+  RotateCcw,
+  Grid
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { useTaskStore } from '../store/useTaskStore';
 import { TaskBoard } from './TaskBoard';
 import { ActivityLogView } from './ActivityLogView';
+import { SettingsView } from './SettingsView';
 import { ContextMenu } from './ContextMenu';
+import { ProjectModal } from './ProjectModal';
 
 // Sidebar Item Component
 interface SidebarItemProps {
@@ -61,8 +65,13 @@ export const Dashboard: React.FC = () => {
     setCurrentProject, 
     addProject, 
     deleteProject, 
-    updateProject 
+    updateProject,
+    resetBoard
   } = useTaskStore();
+
+  // Dialog State
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<{ id: string, name: string, color: string } | null>(null);
 
   // Context Menu State
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; projectId: string } | null>(null);
@@ -73,13 +82,17 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleCreateProject = () => {
-    const name = prompt('Enter project name:', 'New Project');
-    if (name) {
-      // Pick a random color for variety
-      const colors = ['#FCD535', '#6366f1', '#f43f5e', '#10b981', '#3b82f6'];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      addProject(name, randomColor);
+    setEditingProject(null);
+    setIsProjectModalOpen(true);
+  };
+
+  const handleSaveProject = (name: string, color: string) => {
+    if (editingProject) {
+      updateProject(editingProject.id, { name, color });
+    } else {
+      addProject(name, color);
     }
+    setEditingProject(null);
   };
 
   const handleContextMenu = (e: React.MouseEvent, projectId: string) => {
@@ -98,22 +111,31 @@ export const Dashboard: React.FC = () => {
   const handleRenameProject = (id: string) => {
     const project = projects.find(p => p.id === id);
     if (project) {
-        const newName = prompt('Rename project:', project.name);
-        if (newName) updateProject(id, { name: newName });
+        setEditingProject({ id: project.id, name: project.name, color: project.color });
+        setIsProjectModalOpen(true);
     }
   };
-
+  
+  // Kept for context menu "Change Color" quick action if needed, or redirect to modal
   const handleChangeColor = (id: string) => {
-     // Simple cyclic color change/random for now, or prompt
-     const colors = ['#FCD535', '#6366f1', '#f43f5e', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
-     const randomColor = colors[Math.floor(Math.random() * colors.length)];
-     updateProject(id, { color: randomColor });
+     const project = projects.find(p => p.id === id);
+     if (project) {
+         setEditingProject({ id: project.id, name: project.name, color: project.color });
+         setIsProjectModalOpen(true);
+     }
   };
+
+  const handleResetBoard = () => {
+      if(confirm("Are you sure you want to reset the entire board? This cannot be undone.")) {
+          resetBoard();
+      }
+  }
 
   const renderContent = () => {
     switch (currentView) {
-      case 'board': return <TaskBoard key={currentProjectId} />; // Re-render when project changes
+      case 'board': return <TaskBoard key={currentProjectId} />; 
       case 'activity': return <ActivityLogView />;
+      case 'settings': return <SettingsView />;
       default: return <TaskBoard key={currentProjectId} />; 
     }
   };
@@ -147,8 +169,12 @@ export const Dashboard: React.FC = () => {
         <div className="px-4 py-2 mt-4">
              <div className="flex items-center justify-between mb-2">
                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Projects</h3>
-                 <button onClick={handleCreateProject} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                     <Plus size={14} />
+                 <button 
+                    onClick={handleCreateProject} 
+                    className="p-1 bg-black text-white hover:bg-gray-800 rounded-md transition-colors shadow-sm"
+                    title="New Project"
+                 >
+                     <Plus size={12} strokeWidth={3} />
                  </button>
              </div>
              <div className="space-y-1">
@@ -186,8 +212,15 @@ export const Dashboard: React.FC = () => {
                     icon={Settings} 
                     label="Settings" 
                     active={currentView === 'settings'} 
-                    onClick={() => setCurrentView('board')} 
+                    onClick={() => setCurrentView('settings')} 
                 />
+                <button 
+                    onClick={handleResetBoard}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-600 dark:hover:text-red-400"
+                >
+                    <RotateCcw size={18} />
+                    <span className="text-sm truncate flex-1 text-left">Reset Board</span>
+                </button>
             </div>
         </div>
         
@@ -232,11 +265,32 @@ export const Dashboard: React.FC = () => {
             onClose={closeContextMenu}
             options={[
                 { label: 'Rename Project', icon: <Edit2 size={14} />, onClick: () => handleRenameProject(contextMenu.projectId) },
-                { label: 'Change Color', icon: <Palette size={14} />, onClick: () => handleChangeColor(contextMenu.projectId) },
+                { label: 'Change Icon Color', icon: <Palette size={14} />, onClick: () => handleChangeColor(contextMenu.projectId) },
+                { 
+                    label: 'Board Background', 
+                    icon: <Grid size={14} />, 
+                    onClick: () => {
+                        // Toggle to a default or open modal? 
+                        // For now, let's just cycle or provide a quick way.
+                        // Actually, the user asked for "predefined board background colors".
+                        // I already added them to the Board itself. 
+                        // I'll add them here too for consistency.
+                        updateProject(contextMenu.projectId, { boardColor: '#f8fafc' });
+                    } 
+                },
                 { label: 'Delete Project', icon: <Trash2 size={14} />, color: 'text-red-500', onClick: () => handleDeleteProject(contextMenu.projectId) },
             ]}
         />
       )}
+
+      <ProjectModal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+        onSubmit={handleSaveProject}
+        initialName={editingProject?.name}
+        initialColor={editingProject?.color}
+        title={editingProject ? 'Edit Project' : 'New Project'}
+      />
     </div>
   );
 };

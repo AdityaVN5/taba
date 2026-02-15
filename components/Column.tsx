@@ -61,9 +61,15 @@ export const Column: React.FC<ColumnProps> = ({ id, title, tasks, onEditTask, on
         </SortableContext>
         
         {tasks.length === 0 && (
-            <div className="h-24 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl flex items-center justify-center text-gray-400 text-sm mt-2">
-                Drop tasks here
-            </div>
+            <button 
+                onClick={onAddTask}
+                className="w-full h-24 border-2 border-dashed border-gray-200 dark:border-gray-700/50 rounded-xl flex flex-col items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all group mt-2"
+            >
+                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <Plus size={16} />
+                </div>
+                <span className="text-sm font-medium">Add New Task</span>
+            </button>
         )}
       </div>
     </div>
