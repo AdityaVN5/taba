@@ -111,8 +111,11 @@ export const TaskBoard: React.FC = () => {
     setActiveId(null);
   };
 
-  const handleCreateTask = () => {
+  const [modalStatus, setModalStatus] = useState<TaskStatus>('Todo');
+
+  const handleCreateTask = (status?: TaskStatus) => {
     setEditingTask(null);
+    setModalStatus(status || 'Todo');
     setIsModalOpen(true);
   };
 
@@ -255,6 +258,7 @@ export const TaskBoard: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         taskToEdit={editingTask}
+        initialStatus={modalStatus}
       />
 
       {taskContextMenu && (
