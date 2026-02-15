@@ -16,17 +16,19 @@ import { useTaskStore, Task, TaskStatus, TaskPriority } from '../store/useTaskSt
 import { Column } from './Column';
 import { TaskCard } from './TaskCard';
 import { TaskModal } from './TaskModal';
-import { Search, Filter, ArrowUpDown, Plus, Grid } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, Plus, Grid, Edit2, Trash2 } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import { ContextMenu } from './ContextMenu';
 
 export const TaskBoard: React.FC = () => {
-  const { tasks, moveTask, updateTask } = useTaskStore();
+  const { tasks, moveTask, updateTask, currentProjectId } = useTaskStore();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'All'>('All');
   const [sortBy, setSortBy] = useState<'dueDate' | 'default'>('default');
+  const [taskContextMenu, setTaskContextMenu] = useState<{ x: number; y: number; task: Task } | null>(null);
 
   // DnD Sensors
   const sensors = useSensors(
@@ -36,7 +38,7 @@ export const TaskBoard: React.FC = () => {
 
   // Filter and Sort Logic
   const filteredTasks = useMemo(() => {
-    let result = tasks;
+    let result = tasks.filter(t => t.projectId === currentProjectId); // Filter by Project!
 
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
@@ -60,7 +62,7 @@ export const TaskBoard: React.FC = () => {
     }
 
     return result;
-  }, [tasks, searchQuery, priorityFilter, sortBy]);
+  }, [tasks, searchQuery, priorityFilter, sortBy, currentProjectId]);
 
   const columns: TaskStatus[] = ['Todo', 'Doing', 'Done'];
 
@@ -110,10 +112,17 @@ export const TaskBoard: React.FC = () => {
       useTaskStore.getState().deleteTask(id);
   }
 
+  const handleTaskContextMenu = (e: React.MouseEvent, task: Task) => {
+      e.preventDefault();
+      setTaskContextMenu({ x: e.clientX, y: e.clientY, task });
+  };
+
+  const closeTaskContextMenu = () => setTaskContextMenu(null);
+
   const activeTask = tasks.find((t) => t.id === activeId);
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900">
+    <div className="flex flex-col h-full bg-white dark:bg-gray-900 relative">
       {/* Header / Toolbar */}
       <div className="px-6 py-3 border-b border-gray-100 dark:border-gray-800 flex-shrink-0 space-y-3">
          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -176,6 +185,7 @@ export const TaskBoard: React.FC = () => {
                   onEditTask={handleEditTask}
                   onDeleteTask={handleDeleteTask}
                   onAddTask={handleCreateTask}
+                  onContextMenu={handleTaskContextMenu}
                 />
               ))}
            </div>
@@ -183,7 +193,7 @@ export const TaskBoard: React.FC = () => {
 
         {createPortal(
           <DragOverlay>
-            {activeTask && <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} />}
+            {activeTask && <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onContextMenu={() => {}} />}
           </DragOverlay>,
           document.body
         )}
@@ -194,6 +204,18 @@ export const TaskBoard: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         taskToEdit={editingTask}
       />
+
+      {taskContextMenu && (
+          <ContextMenu
+            x={taskContextMenu.x}
+            y={taskContextMenu.y}
+            onClose={closeTaskContextMenu}
+            options={[
+                { label: 'Edit Task', icon: <Edit2 size={14} />, onClick: () => handleEditTask(taskContextMenu.task) },
+                { label: 'Delete Task', icon: <Trash2 size={14} />, color: 'text-red-500', onClick: () => handleDeleteTask(taskContextMenu.task.id) }
+            ]}
+          />
+      )}
     </div>
   );
 };

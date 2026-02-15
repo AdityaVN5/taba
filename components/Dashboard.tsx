@@ -1,76 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Layout, 
   Search, 
   Plus, 
-  Filter, 
-  Target, 
-  Clock,
-  Settings,
-  Users,
-  FolderOpen,
-  Star,
-  Monitor,
-  PanelLeftClose,
-  LogOut,
-  RotateCcw,
-  Activity
+  Settings, 
+  PanelLeftClose, 
+  LogOut, 
+  Activity, 
+  Folder,
+  Trash2,
+  Edit2,
+  Palette
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { useTaskStore } from '../store/useTaskStore';
 import { TaskBoard } from './TaskBoard';
 import { ActivityLogView } from './ActivityLogView';
-
-// --- Shared Components ---
+import { ContextMenu } from './ContextMenu';
 
 // Sidebar Item Component
-const SidebarItem = ({ 
+interface SidebarItemProps {
+  icon: any;
+  label: string;
+  active?: boolean;
+  onClick?: () => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
+  color?: string;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({ 
   icon: Icon, 
   label, 
   active = false, 
-  onClick 
-}: { 
-  icon: any, 
-  label: string, 
-  active?: boolean, 
-  onClick?: () => void 
+  onClick,
+  onContextMenu,
+  color
 }) => (
   <div 
     onClick={onClick}
+    onContextMenu={onContextMenu}
     className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${active ? 'bg-accent-yellow/20 text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5'}`}
   >
-    <Icon size={18} className={active ? 'text-gray-900 dark:text-white' : ''} />
-    <span className="text-sm">{label}</span>
+    <Icon size={18} className={active ? 'text-gray-900 dark:text-white' : ''} style={{ color: color }} />
+    <span className="text-sm truncate flex-1">{label}</span>
   </div>
 );
-
-// --- Main Dashboard Component ---
 
 export const Dashboard: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [currentView, setCurrentView] = useState('board');
   const navigate = useNavigate();
+  
+  // Stores
   const logout = useAuthStore((state) => state.logout);
   const user = useAuthStore((state) => state.user);
-  const resetBoard = useTaskStore((state) => state.resetBoard);
+  const { 
+    projects, 
+    currentProjectId, 
+    setCurrentProject, 
+    addProject, 
+    deleteProject, 
+    updateProject 
+  } = useTaskStore();
+
+  // Context Menu State
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; projectId: string } | null>(null);
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  const handleResetBoard = () => {
-    if (window.confirm('Are you sure you want to delete all tasks? This action cannot be undone.')) {
-      resetBoard();
+  const handleCreateProject = () => {
+    const name = prompt('Enter project name:', 'New Project');
+    if (name) {
+      // Pick a random color for variety
+      const colors = ['#FCD535', '#6366f1', '#f43f5e', '#10b981', '#3b82f6'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      addProject(name, randomColor);
     }
+  };
+
+  const handleContextMenu = (e: React.MouseEvent, projectId: string) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, projectId });
+  };
+
+  const closeContextMenu = () => setContextMenu(null);
+
+  const handleDeleteProject = (id: string) => {
+    if (window.confirm('Delete this project and all its tasks?')) {
+      deleteProject(id);
+    }
+  };
+
+  const handleRenameProject = (id: string) => {
+    const project = projects.find(p => p.id === id);
+    if (project) {
+        const newName = prompt('Rename project:', project.name);
+        if (newName) updateProject(id, { name: newName });
+    }
+  };
+
+  const handleChangeColor = (id: string) => {
+     // Simple cyclic color change/random for now, or prompt
+     const colors = ['#FCD535', '#6366f1', '#f43f5e', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+     const randomColor = colors[Math.floor(Math.random() * colors.length)];
+     updateProject(id, { color: randomColor });
   };
 
   const renderContent = () => {
     switch (currentView) {
-      case 'board': return <TaskBoard />;
+      case 'board': return <TaskBoard key={currentProjectId} />; // Re-render when project changes
       case 'activity': return <ActivityLogView />;
-      default: return <TaskBoard />; 
+      default: return <TaskBoard key={currentProjectId} />; 
     }
   };
 
@@ -80,65 +124,75 @@ export const Dashboard: React.FC = () => {
       <aside 
         className={`${
           isSidebarOpen ? 'w-64' : 'w-0 opacity-0'
-        } border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex-shrink-0 flex flex-col transition-all duration-300 overflow-hidden`}
+        } border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex-shrink-0 flex flex-col transition-all duration-300 overflow-hidden relative`}
       >
         
-        {/* Search and Collapse Header */}
-        <div className="px-3 pt-4 pb-0 flex items-center gap-2">
-            <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
-                <input
-                    type="text"
-                    placeholder="Search"
-                    disabled
-                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-accent-yellow transition-all cursor-not-allowed opacity-60"
-                />
-            </div>
+        {/* Header */}
+        <div className="px-3 pt-4 pb-2 flex items-center justify-between">
+             <div className="flex items-center gap-2 px-2">
+                <div className="w-6 h-6 bg-accent-yellow rounded-md flex items-center justify-center flex-shrink-0">
+                    <span className="font-bold text-xs text-black">TD</span>
+                </div>
+                <span className="font-semibold text-sm">TABA Discovery</span>
+             </div>
             <button
                 onClick={() => setSidebarOpen(false)}
                 className="p-1.5 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors"
-                title="Collapse Sidebar"
             >
                 <PanelLeftClose size={16} />
             </button>
         </div>
 
-        {/* Branding */}
-        <div className="px-5 py-4 flex items-center gap-2">
-            <div className="w-6 h-6 bg-accent-yellow rounded-md flex items-center justify-center flex-shrink-0">
-                <span className="font-bold text-xs text-black">TD</span>
+        {/* Projects Section */}
+        <div className="px-4 py-2 mt-4">
+             <div className="flex items-center justify-between mb-2">
+                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Projects</h3>
+                 <button onClick={handleCreateProject} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                     <Plus size={14} />
+                 </button>
+             </div>
+             <div className="space-y-1">
+                 {projects.map(project => (
+                     <SidebarItem 
+                        key={project.id}
+                        icon={Folder} 
+                        label={project.name} 
+                        color={project.color}
+                        active={currentView === 'board' && currentProjectId === project.id}
+                        onClick={() => {
+                            setCurrentProject(project.id);
+                            setCurrentView('board');
+                        }}
+                        onContextMenu={(e) => handleContextMenu(e, project.id)}
+                     />
+                 ))}
+                 {projects.length === 0 && (
+                     <div className="text-xs text-gray-400 italic px-2 py-1">No projects</div>
+                 )}
+             </div>
+        </div>
+
+        {/* Profile & Activity Section */}
+        <div className="px-4 py-2 mt-4 border-t border-gray-200 dark:border-gray-800 pt-6">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Profile & Activity</h3>
+            <div className="space-y-1">
+                <SidebarItem 
+                    icon={Activity} 
+                    label="Activity Log" 
+                    active={currentView === 'activity'} 
+                    onClick={() => setCurrentView('activity')} 
+                />
+                 <SidebarItem 
+                    icon={Settings} 
+                    label="Settings" 
+                    active={currentView === 'settings'} 
+                    onClick={() => setCurrentView('board')} 
+                />
             </div>
-            <span className="font-semibold text-sm whitespace-nowrap">Task Board</span>
-        </div>
-
-        <div className="px-3 mb-4">
-            <button className="w-full bg-primary dark:bg-white text-white dark:text-black py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
-                <Plus size={16} /> Create Project
-            </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-2 space-y-1">
-          <SidebarItem icon={Layout} label="Task Board" active={currentView === 'board'} onClick={() => setCurrentView('board')} />
-          <SidebarItem icon={Activity} label="Activity Log" active={currentView === 'activity'} onClick={() => setCurrentView('activity')} />
-          <SidebarItem icon={Clock} label="Recent" active={currentView === 'recent'} onClick={() => setCurrentView('board')} />
-          <SidebarItem icon={Star} label="Starred" active={currentView === 'starred'} onClick={() => setCurrentView('board')} />
-          
-          <div className="pt-4 pb-2 px-3 text-xs font-semibold text-gray-500 uppercase">Views</div>
-          <SidebarItem icon={Filter} label="Filters" active={currentView === 'filters'} onClick={() => setCurrentView('board')} />
-          <SidebarItem icon={Monitor} label="Dashboards" active={currentView === 'dashboards'} onClick={() => setCurrentView('board')} />
-          <SidebarItem icon={Users} label="Teams" active={currentView === 'teams'} onClick={() => setCurrentView('board')} />
-          <SidebarItem icon={Settings} label="Settings" active={currentView === 'settings'} onClick={() => setCurrentView('board')} />
         </div>
         
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800 space-y-2">
-            <button 
-                onClick={handleResetBoard}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-            >
-                <RotateCcw size={16} /> Reset Board
-            </button>
-
-            <div className="flex items-center gap-3 pt-2">
+        <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-800">
+            <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs flex-shrink-0">
                     {user?.name?.charAt(0) || 'U'}
                 </div>
@@ -169,6 +223,20 @@ export const Dashboard: React.FC = () => {
         )}
         {renderContent()}
       </main>
+
+      {/* Project Context Menu */}
+      {contextMenu && (
+        <ContextMenu 
+            x={contextMenu.x} 
+            y={contextMenu.y} 
+            onClose={closeContextMenu}
+            options={[
+                { label: 'Rename Project', icon: <Edit2 size={14} />, onClick: () => handleRenameProject(contextMenu.projectId) },
+                { label: 'Change Color', icon: <Palette size={14} />, onClick: () => handleChangeColor(contextMenu.projectId) },
+                { label: 'Delete Project', icon: <Trash2 size={14} />, color: 'text-red-500', onClick: () => handleDeleteProject(contextMenu.projectId) },
+            ]}
+        />
+      )}
     </div>
   );
 };

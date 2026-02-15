@@ -13,9 +13,10 @@ interface ColumnProps {
   onEditTask: (task: Task) => void;
   onDeleteTask: (id: string) => void;
   onAddTask: () => void;
+  onContextMenu: (e: React.MouseEvent, task: Task) => void;
 }
 
-export const Column: React.FC<ColumnProps> = ({ id, title, tasks, onEditTask, onDeleteTask, onAddTask }) => {
+export const Column: React.FC<ColumnProps> = ({ id, title, tasks, onEditTask, onDeleteTask, onAddTask, onContextMenu }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: id,
   });
@@ -53,6 +54,7 @@ export const Column: React.FC<ColumnProps> = ({ id, title, tasks, onEditTask, on
                 task={task}
                 onEdit={onEditTask}
                 onDelete={onDeleteTask}
+                onContextMenu={onContextMenu}
               />
             ))}
           </div>

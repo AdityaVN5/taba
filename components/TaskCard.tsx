@@ -10,9 +10,10 @@ interface TaskCardProps {
   task: Task;
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
+  onContextMenu: (e: React.MouseEvent, task: Task) => void;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onContextMenu }) => {
   const {
     attributes,
     listeners,
@@ -39,6 +40,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) =>
       style={style}
       {...attributes}
       {...listeners}
+      onContextMenu={(e) => onContextMenu(e, task)}
       className={clsx(
         "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative",
         isDragging && "opacity-50 ring-2 ring-accent-yellow rotate-2"
