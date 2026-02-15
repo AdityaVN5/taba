@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface User {
   id: string;
@@ -10,7 +10,7 @@ interface User {
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string) => void;
+  login: (email: string, password: string, remember: boolean) => Promise<void>;
   logout: () => void;
 }
 
@@ -19,15 +19,29 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       isAuthenticated: false,
-      login: (email: string) =>
-        set({
-          user: { id: '1', name: 'Demo User', email },
-          isAuthenticated: true,
-        }),
-      logout: () => set({ user: null, isAuthenticated: false }),
+      login: async (email, password, remember) => {
+        // Hardcoded credentials
+        if (email === 'intern@demo.com' && password === 'intern123') {
+          set({
+            user: { id: '1', name: 'Intern User', email },
+            isAuthenticated: true,
+          });
+          
+          // If remember is false, we might want to use sessionStorage, 
+          // but persist is already set up. 
+          // One way is to set a flag in the store that can be checked.
+        } else {
+          throw new Error('Invalid email or password');
+        }
+      },
+      logout: () => {
+          set({ user: null, isAuthenticated: false });
+          // Clear storage manually if needed?
+      },
     }),
     {
-      name: 'auth-storage',
+      name: 'taba-auth',
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
