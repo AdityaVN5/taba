@@ -37,12 +37,16 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCo
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{ 
+          ...style, 
+          backgroundColor: task.backgroundColor || undefined 
+      }}
       {...attributes}
       {...listeners}
       onContextMenu={(e) => onContextMenu(e, task)}
       className={clsx(
-        "bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative",
+        "p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative",
+        !task.backgroundColor && "bg-white dark:bg-gray-800",
         isDragging && "opacity-50 ring-2 ring-accent-yellow rotate-2"
       )}
     >
@@ -50,14 +54,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCo
         <span className={clsx("px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider", priorityColor[task.priority])}>
           {task.priority}
         </span>
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-           <button 
-             onClick={(e) => { e.stopPropagation(); onEdit(task); }}
-             className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500"
-           >
-             <MoreHorizontal size={14} />
-           </button>
-        </div>
       </div>
       
       <h3 className="font-semibold text-gray-900 dark:text-white mb-1 leading-snug">{task.title}</h3>
@@ -79,19 +75,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCo
             </div>
         ))}
       </div>
-      
-      {/* Delete Overlay for quick action? Or context menu. Keeping it simple for now with edit button opening modal which can have delete */}
-      {/* Actually I'll add a delete x button on hover for speed */}
-        <button 
-             onClick={(e) => { 
-                 e.stopPropagation(); 
-                 if(window.confirm('Delete task?')) onDelete(task.id); 
-             }}
-             className="absolute top-2 right-2 p-1 hover:text-red-500 rounded text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
-             title="Delete"
-           >
-             <XAlertIcon size={14} />
-       </button>
     </div>
   );
 };

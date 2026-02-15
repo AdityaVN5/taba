@@ -22,6 +22,7 @@ export interface Task {
   status: TaskStatus;
   priority: TaskPriority;
   dueDate: string | null; // ISO string
+  backgroundColor?: string;
   tags: string[];
   createdAt: string; // ISO string
 }

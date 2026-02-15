@@ -34,7 +34,6 @@ export const Column: React.FC<ColumnProps> = ({ id, title, tasks, onEditTask, on
           {title} <span className="ml-1 opacity-60">({tasks.length})</span>
         </span>
         <div className="flex items-center gap-1 text-gray-400">
-           <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"><MoreHorizontal size={16} /></button>
            <button onClick={onAddTask} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"><Plus size={16} /></button>
         </div>
       </div>

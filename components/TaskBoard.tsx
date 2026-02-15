@@ -264,6 +264,17 @@ export const TaskBoard: React.FC = () => {
             onClose={closeTaskContextMenu}
             options={[
                 { label: 'Edit Task', icon: <Edit2 size={14} />, onClick: () => handleEditTask(taskContextMenu.task) },
+                { 
+                    label: 'Background Color', 
+                    icon: <Palette size={14} />, 
+                    options: [
+                        { label: 'Default', icon: <div className="w-3 h-3 rounded-full bg-white border border-gray-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: undefined }) },
+                        { label: 'Red', icon: <div className="w-3 h-3 rounded-full bg-red-50 border border-red-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#fef2f2' }) },
+                        { label: 'Blue', icon: <div className="w-3 h-3 rounded-full bg-blue-50 border border-blue-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#eff6ff' }) },
+                        { label: 'Green', icon: <div className="w-3 h-3 rounded-full bg-green-50 border border-green-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#f0fdf4' }) },
+                        { label: 'Yellow', icon: <div className="w-3 h-3 rounded-full bg-yellow-50 border border-yellow-200" />, onClick: () => updateTask(taskContextMenu.task.id, { backgroundColor: '#fefce8' }) },
+                    ]
+                },
                 { label: 'Delete Task', icon: <Trash2 size={14} />, color: 'text-red-500', onClick: () => handleDeleteTask(taskContextMenu.task.id) }
             ]}
           />

@@ -269,14 +269,13 @@ export const Dashboard: React.FC = () => {
                 { 
                     label: 'Board Background', 
                     icon: <Grid size={14} />, 
-                    onClick: () => {
-                        // Toggle to a default or open modal? 
-                        // For now, let's just cycle or provide a quick way.
-                        // Actually, the user asked for "predefined board background colors".
-                        // I already added them to the Board itself. 
-                        // I'll add them here too for consistency.
-                        updateProject(contextMenu.projectId, { boardColor: '#f8fafc' });
-                    } 
+                    options: [
+                        { label: 'Default', icon: <div className="w-3 h-3 rounded-full bg-white dark:bg-gray-900 border border-gray-200" />, onClick: () => updateProject(contextMenu.projectId, { boardColor: '' }) },
+                        { label: 'Slate', icon: <div className="w-3 h-3 rounded-full bg-slate-50 dark:bg-slate-900 border border-gray-200" />, onClick: () => updateProject(contextMenu.projectId, { boardColor: '#f8fafc' }) },
+                        { label: 'Gray', icon: <div className="w-3 h-3 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200" />, onClick: () => updateProject(contextMenu.projectId, { boardColor: '#f3f4f6' }) },
+                        { label: 'Blue', icon: <div className="w-3 h-3 rounded-full bg-blue-50 dark:bg-blue-900 border border-gray-200" />, onClick: () => updateProject(contextMenu.projectId, { boardColor: '#eff6ff' }) },
+                        { label: 'Amber', icon: <div className="w-3 h-3 rounded-full bg-amber-50 dark:bg-amber-900 border border-gray-200" />, onClick: () => updateProject(contextMenu.projectId, { boardColor: '#fffbeb' }) },
+                    ]
                 },
                 { label: 'Delete Project', icon: <Trash2 size={14} />, color: 'text-red-500', onClick: () => handleDeleteProject(contextMenu.projectId) },
             ]}
