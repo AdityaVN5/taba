@@ -1,10 +1,18 @@
 import React from 'react';
 import { Menu, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
+  const linkClass = (path: string) => `text-sm font-medium transition-all px-4 py-2 rounded-full ${
+    isActive(path) 
+    ? 'bg-black/5 dark:bg-white/10 text-black dark:text-white' 
+    : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+  }`;
 
   return (
     <nav className="w-full px-8 py-6 flex items-center justify-between relative z-50">
@@ -15,13 +23,13 @@ export const Navbar = () => {
 
       {/* Desktop Menu Pill */}
       <div className="hidden md:flex items-center gap-1 p-1 bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-full border border-white/40 dark:border-white/20 shadow-sm">
-        <a href="/" className="text-sm font-medium text-black dark:text-white hover:opacity-60 transition-opacity px-4 py-2">
+        <button onClick={() => navigate('/')} className={linkClass('/')}>
             Home
-        </a>
-        <button onClick={() => navigate('/features')} className="text-sm font-medium text-black dark:text-white hover:opacity-60 transition-opacity px-4 py-2">
+        </button>
+        <button onClick={() => navigate('/features')} className={linkClass('/features')}>
             Features
         </button>
-        <button onClick={() => navigate('/docs')} className="text-sm font-medium text-black dark:text-white hover:opacity-60 transition-opacity px-4 py-2">
+        <button onClick={() => navigate('/docs')} className={linkClass('/docs')}>
             Docs
         </button>
         
@@ -53,11 +61,26 @@ export const Navbar = () => {
       {/* Mobile Menu Overlay */}
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mx-6 mt-2 bg-white/90 dark:bg-gray-900/95 backdrop-blur-lg p-6 rounded-2xl flex flex-col gap-4 border border-gray-200 dark:border-white/10 shadow-xl animate-in fade-in slide-in-from-top-4 overflow-hidden">
-          <a href="/" className="text-black dark:text-white font-medium py-2 border-b border-gray-100 dark:border-white/5">Home</a>
+          <button 
+            onClick={() => { navigate('/'); setIsOpen(false); }} 
+            className={`text-left font-medium py-2 border-b border-gray-100 dark:border-white/5 ${isActive('/') ? 'text-accent-yellow' : 'text-black dark:text-white'}`}
+          >
+            Home
+          </button>
           <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-white/5">
-            <button onClick={() => { navigate('/features'); setIsOpen(false); }} className="text-black dark:text-white font-medium">Features</button>
+            <button 
+                onClick={() => { navigate('/features'); setIsOpen(false); }} 
+                className={`font-medium ${isActive('/features') ? 'text-accent-yellow' : 'text-black dark:text-white'}`}
+            >
+                Features
+            </button>
           </div>
-          <button onClick={() => { navigate('/docs'); setIsOpen(false); }} className="text-black dark:text-white font-medium py-2 border-b border-gray-100 dark:border-white/5 text-left">Docs</button>
+          <button 
+            onClick={() => { navigate('/docs'); setIsOpen(false); }} 
+            className={`text-left font-medium py-2 border-b border-gray-100 dark:border-white/5 ${isActive('/docs') ? 'text-accent-yellow' : 'text-black dark:text-white'}`}
+          >
+            Docs
+          </button>
           <button 
             onClick={() => {
               navigate('/login');

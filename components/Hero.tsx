@@ -1,7 +1,9 @@
 import React from 'react';
 import { Play } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const Hero: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <main className="flex-grow flex flex-col items-center justify-center text-center px-4 sm:px-6 py-12 md:py-20 relative z-10 w-full max-w-4xl mx-auto mt-8 md:mt-0">
       
@@ -24,12 +26,12 @@ export const Hero: React.FC = () => {
 
       {/* CTAs */}
       <div className="flex flex-col sm:flex-row gap-4 w-full justify-center items-center">
-        <a
-          href="#"
+        <button
+          onClick={() => navigate('/signup')}
           className="w-full sm:w-auto px-8 py-4 bg-accent-yellow hover:bg-[#FCD56E] text-gray-900 font-bold rounded-full transition-all transform hover:-translate-y-1 shadow-glow text-center"
         >
           Get Started for Free
-        </a>
+        </button>
         <button className="w-full sm:w-auto px-8 py-4 glass-nav hover:bg-white/40 text-gray-900 dark:text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2 group">
           <span className="p-1 rounded-full border border-gray-900/10 dark:border-white/20 group-hover:bg-white/20 transition-colors">
              <Play size={18} fill="currentColor" className="text-gray-900 dark:text-white" />
