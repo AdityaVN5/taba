@@ -1,5 +1,11 @@
 # TABA - Modern Task Board Application
 
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Zustand](https://img.shields.io/badge/Zustand-5.0-black?logo=react&logoColor=white)](https://github.com/pmndrs/zustand)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
 TABA is a premium, highly interactive Kanban-style task management application built with a focus on Frontend Engineering excellence. It combines sleek aesthetics with a robust, performant architecture.
 
 ![TABA Preview](https://via.placeholder.com/800x450?text=TABA+Task+Board+Preview)
@@ -42,49 +48,48 @@ To explore the application, use the following hardcoded credentials:
 
 ## 🛠️ Tech Stack & Decision Rationale
 
-This project was built with a specific focus on scalability, maintainability, and user experience. Below are the key technical decisions made during development:
+This project was built with a specific focus on scalability, maintainability, and user experience.
 
 ### 1. State Management: Zustand
 
-**Rationale**: We chose **Zustand** over Redux or Context API for several reasons:
+**Rationale**: We chose **Zustand** over Redux for its simplicity and power:
 
-- **Zero Boilerplate**: Unlike Redux, Zustand allows us to define stores in a few lines of code without unnecessary actions, reducers, or types.
-- **Performance**: It uses a subscription-based model that prevents unnecessary re-renders of components that don't need the updated data.
-- **Persistence Middleware**: Integrated easily with `localStorage` to ensure tasks and projects are saved across sessions automatically.
+- **Zero Boilerplate**: Define stores in a few lines without actions/reducers.
+- **Selective Subscriptions**: Only components that use specific state slices re-render, significantly boosting performance.
+- **Persistence**: Leverages middleware to sync state with `localStorage` automatically, preventing data loss on refresh.
 
 ### 2. Drag & Drop: @dnd-kit
 
-**Rationale**: For the core Kanban board functionality, we utilized **@dnd-kit**:
+**Rationale**: For the core Kanban board functionality:
 
-- **Modularity**: It is a collection of narrow-purpose packages, meaning we only import what we need (core, sortable, utilities).
-- **Accessibility**: Built-in support for keyboard sensors and screen readers out of the box.
-- **Performance**: Modern architecture that feels significantly snappier than the now-legacy `react-beautiful-dnd`.
+- **Modular Design**: Reduces bundle size by only including necessary logic for sorting and basic dragging.
+- **Accessibility**: Includes broad ARIA support, making the board usable for everyone.
+- **Extensible**: Allows for custom sensors (Mouse, Touch, Keyboard) for a truly multi-platform feel.
 
-### 3. Styling: Tailwind CSS
+### 3. Styling: Tailwind CSS & Dark Mode
 
-**Rationale**: To achieve the "Wow Factor" design:
+**Rationale**: Achieving a state-of-the-art look:
 
-- **Utility-First**: Allowed for rapid prototyping of complex UI elements like glassmorphic cards and custom gradients without leaving the TSX files.
-- **Consistency**: Used a tailored color palette and shadow system to ensure a premium, cohesive look throughout the application.
-- **Dark Mode**: Native support enabled a seamless transition between light and dark themes with minimal extra code.
+- **Design Systems**: Tailwind allows us to codify spacing and colors, ensuring the UI stays consistent as it grows.
+- **Dynamic Themes**: Uses CSS variables and class-based dark mode for instant, smooth theme switching.
 
-### 4. Component-Based Architecture
+---
 
-**Rationale**: The application is broken down into small, focused components (`Column.tsx`, `TaskCard.tsx`, `ContextMenu.tsx`):
+## ⚡ Performance Optimizations
 
-- **Reusability**: The `ContextMenu` was designed as a generic, recursive component that handles nested sub-menus for any part of the app.
-- **Separation of Concerns**: Logic for individual tasks is encapsulated within `TaskCard`, while the overall board flow is managed by `TaskBoard`.
+- **Memoized Filtering**: Task filtering and sorting are handled via `useMemo` to ensure the UI remains responsive even with hundreds of tasks.
+- **Recursive Rendering**: The `ContextMenu` component is built to recursively render sub-menus, minimizing memory overhead and maximizing code reuse.
+- **Context-Free State**: By using Zustand, we avoid "Prop Drilling" and "Context Hell", keeping the component tree flat and easy to debug.
 
 ---
 
 ## ✨ Key Features
 
-- **Interactive Kanban Board**: Drag and drop tasks across "Todo", "Doing", and "Done" columns.
-- **Customization**: Set unique background colors for individual tasks and entire project boards via right-click context menus.
-- **Search & Filter**: Find tasks instantly by title, description, or tags. Filter by priority levels.
-- **Nested Context Menus**: A custom-built menu system that supports deep nesting for intuitive feature discovery.
-- **Authentication Flow**: Secure login with "Remember Me" functionality.
-- **Responsive & Dynamic**: Fully responsive layout with smooth micro-animations and a sleek dark mode.
+- **Interactive Kanban Board**: Drag and drop tasks across workflow stages.
+- **Visual Customization**: Right-click tasks or board areas to apply custom pastel color palettes.
+- **Search & Tagging**: Instant searching by title, description, or tags with auto-save functionality.
+- **Authentication**: Secure flow with error validation and persistent "Remember Me" session management.
+- **Nested Menus**: Sophisticated context menu system with hoverable sub-options.
 
 ---
 
@@ -92,11 +97,21 @@ This project was built with a specific focus on scalability, maintainability, an
 
 ```text
 src/
-├── components/       # UI Components (TaskBoard, Column, TaskCard, etc.)
-├── store/            # Zustand stores (useTaskStore, useAuthStore)
-├── App.tsx           # Route management and global layout
-└── index.tsx         # Application entry point
+├── components/       # Atomic and complex UI Components
+├── store/            # State stores (Auth & Task management)
+├── App.tsx           # Entry router and global theme wrapper
+└── index.tsx         # Root mounting point
 ```
+
+---
+
+## 🚀 Upcoming Features
+
+- **User Accounts & Teams**: Implement multi-user support with team collaboration features.
+- **Real-time Updates**: Integrate WebSockets for live updates across multiple clients.
+- **Customizable Workflows**: Allow users to define their own columns and workflow stages.
+- **Due Dates & Reminders**: Add functionality for setting task deadlines and notifications.
+- **Advanced Filtering**: More robust filtering options, including date ranges and assignee.
 
 ---
 
