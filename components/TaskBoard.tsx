@@ -194,104 +194,109 @@ export const TaskBoard: React.FC = () => {
               </div>
 
             {/* Filters Row */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2">Filter:</span>
-                 
-                 {['All', 'High', 'Medium', 'Low'].map((p) => {
-                     const isSelected = priorityFilter === p;
-                     return (
-                        <button
-                            key={p}
-                            onClick={() => setPriorityFilter(p as any)}
-                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap border ${
-                                isSelected 
-                                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 border-transparent shadow-md transform scale-105' 
-                                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
-                            }`}
-                        >
-                            {p} Priority
-                        </button>
-                     );
-                 })}
+            <div className="flex items-center justify-between gap-4 pr-2">
+                 {/* Scrollable Filters */}
+                 <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide flex-1">
+                      <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2">Filter:</span>
+                      
+                      {['All', 'High', 'Medium', 'Low'].map((p) => {
+                          const isSelected = priorityFilter === p;
+                          return (
+                             <button
+                                 key={p}
+                                 onClick={() => setPriorityFilter(p as any)}
+                                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap border ${
+                                     isSelected 
+                                     ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 border-transparent shadow-md transform scale-105' 
+                                     : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                 }`}
+                             >
+                                 {p} Priority
+                             </button>
+                          );
+                      })}
+                 </div>
 
+                 {/* Non-scrollable Sort Controls */}
+                 <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="h-4 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2 flex-shrink-0" />
 
-                 <div className="h-4 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2 flex-shrink-0" />
+                      {/* Sort Icon Dropdown */}
+                      <div className="relative">
+                          <button 
+                             onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                             className={`p-1.5 rounded-full border transition-all ${
+                                 isSortDropdownOpen
+                                 ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600'
+                                 : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                             }`}
+                             title="Sort Tasks"
+                          >
+                             <ListFilter size={16} className="text-gray-600 dark:text-gray-400" />
+                          </button>
 
-                 {/* Active Sort Pill */}
-                 {sortBy !== 'default' && (
-                    <div className="relative">
-                        <button
-                            onClick={() => setActiveSortPopoverOpen(!activeSortPopoverOpen)}
-                            className="bg-accent-yellow text-black px-3 py-1.5 rounded-full text-xs font-bold shadow-md transform scale-105 flex items-center gap-1.5 animate-in fade-in zoom-in duration-200"
-                        >
-                            {sortBy === 'dueDate' && <ArrowUpDown size={12} />}
-                            {sortBy === 'priorityHighToLow' && 'Priority (High → Low)'}
-                            {sortBy === 'priorityLowToHigh' && 'Priority (Low → High)'}
-                            {sortBy === 'dueDate' && 'Due Date'}
-                        </button>
-                        
-                        {/* Delete Sort Popover */}
-                        {activeSortPopoverOpen && (
-                            <div className="absolute top-full mt-2 left-0 w-max bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-1 z-50 animate-in fade-in slide-in-from-top-2">
-                                <button
-                                    onClick={() => {
-                                        setSortBy('default');
-                                        setActiveSortPopoverOpen(false);
-                                    }}
-                                    className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg w-full text-left"
-                                >
-                                    <X size={12} /> Clear Sort
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                 )}
+                          {isSortDropdownOpen && (
+                              <div className="absolute top-full mt-2 right-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-1 z-[60] animate-in fade-in slide-in-from-top-2">
+                                  <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 mb-1">
+                                      Sort By
+                                  </div>
+                                  
+                                  <button
+                                     onClick={() => { setSortBy('dueDate'); setIsSortDropdownOpen(false); }}
+                                     className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
+                                  >
+                                      <span>Due Date</span>
+                                      {sortBy === 'dueDate' && <Check size={14} className="text-accent-yellow" />}
+                                  </button>
 
-                 {/* Sort Icon Dropdown */}
-                 <div className="relative">
-                     <button 
-                        onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                        className={`p-1.5 rounded-full border transition-all ${
-                            isSortDropdownOpen
-                            ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600'
-                            : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
-                        }`}
-                        title="Sort Tasks"
-                     >
-                        <ListFilter size={16} className="text-gray-600 dark:text-gray-400" />
-                     </button>
+                                  <button
+                                     onClick={() => { setSortBy('priorityHighToLow'); setIsSortDropdownOpen(false); }}
+                                     className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
+                                  >
+                                      <span>Priority (High to Low)</span>
+                                      {sortBy === 'priorityHighToLow' && <Check size={14} className="text-accent-yellow" />}
+                                  </button>
 
-                     {isSortDropdownOpen && (
-                         <div className="absolute top-full mt-2 right-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-1 z-50 animate-in fade-in slide-in-from-top-2">
-                             <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 mb-1">
-                                 Sort By
-                             </div>
+                                  <button
+                                     onClick={() => { setSortBy('priorityLowToHigh'); setIsSortDropdownOpen(false); }}
+                                     className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
+                                  >
+                                      <span>Priority (Low to High)</span>
+                                      {sortBy === 'priorityLowToHigh' && <Check size={14} className="text-accent-yellow" />}
+                                  </button>
+                              </div>
+                          )}
+                      </div>
+
+                      {/* Active Sort Pill */}
+                      {sortBy !== 'default' && (
+                         <div className="relative">
+                             <button
+                                 onClick={() => setActiveSortPopoverOpen(!activeSortPopoverOpen)}
+                                 className="bg-accent-yellow text-black px-3 py-1.5 rounded-full text-xs font-bold shadow-md transform scale-105 flex items-center gap-1.5 animate-in fade-in zoom-in duration-200 whitespace-nowrap"
+                             >
+                                 {sortBy === 'dueDate' && <ArrowUpDown size={12} />}
+                                 {sortBy === 'priorityHighToLow' && 'Priority (High → Low)'}
+                                 {sortBy === 'priorityLowToHigh' && 'Priority (Low → High)'}
+                                 {sortBy === 'dueDate' && 'Due Date'}
+                             </button>
                              
-                             <button
-                                onClick={() => { setSortBy('dueDate'); setIsSortDropdownOpen(false); }}
-                                className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
-                             >
-                                 <span>Due Date</span>
-                                 {sortBy === 'dueDate' && <Check size={14} className="text-accent-yellow" />}
-                             </button>
-
-                             <button
-                                onClick={() => { setSortBy('priorityHighToLow'); setIsSortDropdownOpen(false); }}
-                                className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
-                             >
-                                 <span>Priority (High to Low)</span>
-                                 {sortBy === 'priorityHighToLow' && <Check size={14} className="text-accent-yellow" />}
-                             </button>
-
-                             <button
-                                onClick={() => { setSortBy('priorityLowToHigh'); setIsSortDropdownOpen(false); }}
-                                className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
-                             >
-                                 <span>Priority (Low to High)</span>
-                                 {sortBy === 'priorityLowToHigh' && <Check size={14} className="text-accent-yellow" />}
-                             </button>
+                             {/* Delete Sort Popover */}
+                             {activeSortPopoverOpen && (
+                                 <div className="absolute top-full mt-2 right-0 w-max bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-1 z-[60] animate-in fade-in slide-in-from-top-2">
+                                     <button
+                                         onClick={() => {
+                                             setSortBy('default');
+                                             setActiveSortPopoverOpen(false);
+                                         }}
+                                         className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg w-full text-left"
+                                     >
+                                         <X size={12} /> Clear Sort
+                                     </button>
+                                 </div>
+                             )}
                          </div>
-                     )}
+                      )}
                  </div>
             </div>
          </div>
