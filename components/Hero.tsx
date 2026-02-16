@@ -8,7 +8,7 @@ export const Hero: React.FC = () => {
       {/* Badge */}
       <div className="glass-nav px-5 py-1.5 rounded-full mb-8 inline-flex items-center gap-2 animate-fade-in-up">
         <span className="text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200">
-          AI-Powered Productivity
+          Minimal Productivity
         </span>
       </div>
 
