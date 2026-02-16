@@ -16,7 +16,7 @@ import { useTaskStore, Task, TaskStatus, TaskPriority } from '../store/useTaskSt
 import { Column } from './Column';
 import { TaskCard } from './TaskCard';
 import { TaskModal } from './TaskModal';
-import { Search, Filter, ArrowUpDown, Plus, Grid, Edit2, Trash2, Palette } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, Plus, Grid, Edit2, Trash2, Palette, ListFilter, X, Check } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { ContextMenu } from './ContextMenu';
 
@@ -34,9 +34,11 @@ export const TaskBoard: React.FC = () => {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'All'>('All');
-  const [sortBy, setSortBy] = useState<'dueDate' | 'default'>('default');
+  const [sortBy, setSortBy] = useState<'dueDate' | 'priorityHighToLow' | 'priorityLowToHigh' | 'default'>('default');
   const [taskContextMenu, setTaskContextMenu] = useState<{ x: number; y: number; task: Task } | null>(null);
   const [boardContextMenu, setBoardContextMenu] = useState<{ x: number; y: number } | null>(null);
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [activeSortPopoverOpen, setActiveSortPopoverOpen] = useState(false);
 
   const currentProject = useMemo(() => 
     projects.find(p => p.id === currentProjectId), 
@@ -71,6 +73,13 @@ export const TaskBoard: React.FC = () => {
         if (!a.dueDate) return 1;
         if (!b.dueDate) return -1;
         return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+      });
+    } else if (sortBy === 'priorityHighToLow' || sortBy === 'priorityLowToHigh') {
+      const priorityWeight = { High: 3, Medium: 2, Low: 1 };
+      result = [...result].sort((a, b) => {
+        const weightA = priorityWeight[a.priority];
+        const weightB = priorityWeight[b.priority];
+        return sortBy === 'priorityHighToLow' ? weightB - weightA : weightA - weightB;
       });
     }
 
@@ -205,18 +214,85 @@ export const TaskBoard: React.FC = () => {
                      );
                  })}
 
+
                  <div className="h-4 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2 flex-shrink-0" />
 
-                 <button 
-                    onClick={() => setSortBy(sortBy === 'default' ? 'dueDate' : 'default')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all whitespace-nowrap ${
-                        sortBy === 'dueDate' 
-                        ? 'bg-accent-yellow text-black border-transparent shadow-md transform scale-105' 
-                        : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
-                    }`}
-                 >
-                    <ArrowUpDown size={14} /> Due Date
-                 </button>
+                 {/* Active Sort Pill */}
+                 {sortBy !== 'default' && (
+                    <div className="relative">
+                        <button
+                            onClick={() => setActiveSortPopoverOpen(!activeSortPopoverOpen)}
+                            className="bg-accent-yellow text-black px-3 py-1.5 rounded-full text-xs font-bold shadow-md transform scale-105 flex items-center gap-1.5 animate-in fade-in zoom-in duration-200"
+                        >
+                            {sortBy === 'dueDate' && <ArrowUpDown size={12} />}
+                            {sortBy === 'priorityHighToLow' && 'Priority (High → Low)'}
+                            {sortBy === 'priorityLowToHigh' && 'Priority (Low → High)'}
+                            {sortBy === 'dueDate' && 'Due Date'}
+                        </button>
+                        
+                        {/* Delete Sort Popover */}
+                        {activeSortPopoverOpen && (
+                            <div className="absolute top-full mt-2 left-0 w-max bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-1 z-50 animate-in fade-in slide-in-from-top-2">
+                                <button
+                                    onClick={() => {
+                                        setSortBy('default');
+                                        setActiveSortPopoverOpen(false);
+                                    }}
+                                    className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg w-full text-left"
+                                >
+                                    <X size={12} /> Clear Sort
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                 )}
+
+                 {/* Sort Icon Dropdown */}
+                 <div className="relative">
+                     <button 
+                        onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                        className={`p-1.5 rounded-full border transition-all ${
+                            isSortDropdownOpen
+                            ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600'
+                            : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                        title="Sort Tasks"
+                     >
+                        <ListFilter size={16} className="text-gray-600 dark:text-gray-400" />
+                     </button>
+
+                     {isSortDropdownOpen && (
+                         <div className="absolute top-full mt-2 right-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-1 z-50 animate-in fade-in slide-in-from-top-2">
+                             <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 mb-1">
+                                 Sort By
+                             </div>
+                             
+                             <button
+                                onClick={() => { setSortBy('dueDate'); setIsSortDropdownOpen(false); }}
+                                className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
+                             >
+                                 <span>Due Date</span>
+                                 {sortBy === 'dueDate' && <Check size={14} className="text-accent-yellow" />}
+                             </button>
+
+                             <button
+                                onClick={() => { setSortBy('priorityHighToLow'); setIsSortDropdownOpen(false); }}
+                                className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
+                             >
+                                 <span>Priority (High to Low)</span>
+                                 {sortBy === 'priorityHighToLow' && <Check size={14} className="text-accent-yellow" />}
+                             </button>
+
+                             <button
+                                onClick={() => { setSortBy('priorityLowToHigh'); setIsSortDropdownOpen(false); }}
+                                className="flex items-center justify-between w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg text-left"
+                             >
+                                 <span>Priority (Low to High)</span>
+                                 {sortBy === 'priorityLowToHigh' && <Check size={14} className="text-accent-yellow" />}
+                             </button>
+                         </div>
+                     )}
+                 </div>
             </div>
          </div>
       </div>

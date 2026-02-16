@@ -9,6 +9,8 @@ import { SignupPage } from "./components/SignupPage";
 import { Dashboard } from "./components/Dashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Moon, Sun } from "lucide-react";
+import { FeaturesPage } from "./components/FeaturesPage";
+import { DocsPage } from "./components/DocsPage";
 
 export default function App() {
   const [darkMode, setDarkMode] = React.useState(false);
@@ -53,6 +55,9 @@ export default function App() {
             </div>
           } />
 
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/docs" element={<DocsPage />} />
+          
           <Route path="/signup" element={
             <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 transition-colors duration-300 bg-gray-50 dark:bg-black">
                <div className="w-full max-w-[1600px] bg-white dark:bg-gray-900 rounded-[2rem] shadow-soft overflow-hidden relative transition-colors duration-300">
