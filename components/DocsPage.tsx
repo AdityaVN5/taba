@@ -12,6 +12,13 @@ export const DocsPage: React.FC = () => {
     { id: 'faq', title: 'FAQ', icon: <HelpCircle size={18} /> },
   ];
 
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-start p-4 sm:p-8 transition-colors duration-300 bg-gray-50 dark:bg-black overflow-y-auto">
       <div 
@@ -39,6 +46,7 @@ export const DocsPage: React.FC = () => {
                     {sections.map((section) => (
                         <button
                             key={section.id}
+                            onClick={() => scrollToSection(section.id)}
                             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-black dark:hover:text-white group"
                         >
                             <span className="text-gray-400 group-hover:text-accent-yellow transition-colors">
@@ -104,7 +112,42 @@ export const DocsPage: React.FC = () => {
 
                     <section id="privacy" className="mb-16">
                         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white text-left">Privacy & Security</h2>
-                        <p className="text-gray-600 dark:text-gray-400 px-2">Your data stays local and secure. TABA is designed for speed and privacy, with session management that keeps your workspaces isolated from other users.</p>
+                        <p className="text-gray-600 dark:text-gray-400 px-2 leading-relaxed">
+                            Your data stays local and secure. TABA is designed for speed and privacy, with session management that keeps your workspaces isolated from other users.
+                        </p>
+                    </section>
+
+                    <section id="faq" className="mb-16">
+                        <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white text-left">Frequently Asked Questions</h2>
+                        <div className="space-y-4">
+                            {[
+                                {
+                                    q: "Where is my data stored?",
+                                    a: "TABA stores all your task and project data locally in your browser's persistent storage. This ensures maximum privacy and offline accessibility."
+                                },
+                                {
+                                    q: "Can I sync my data across devices?",
+                                    a: "Currently, TABA is local-first for privacy. Cross-device synchronization is a planned feature for future release."
+                                },
+                                {
+                                    q: "Is there a limit to the number of projects?",
+                                    a: "No! You can create as many workspaces and projects as you need. There are no artificial limits on your productivity."
+                                },
+                                {
+                                    q: "How do I change the board theme?",
+                                    a: "Go to your project board and right-click anywhere on the background. You'll see options to change the background to Slate, Blue, or Amber."
+                                },
+                                {
+                                    q: "Does TABA support dark mode?",
+                                    a: "Yes, TABA fully supports system-wide dark and light modes. Use the toggle button at the bottom right of the screen to switch themes."
+                                }
+                            ].map((item, i) => (
+                                <div key={i} className="p-6 rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 transition-all hover:border-accent-yellow/30">
+                                    <h4 className="font-bold text-gray-900 dark:text-white mb-2">{item.q}</h4>
+                                    <p className="m-0 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.a}</p>
+                                </div>
+                            ))}
+                        </div>
                     </section>
                 </div>
             </main>
