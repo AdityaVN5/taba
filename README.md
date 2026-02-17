@@ -11,7 +11,6 @@
 
 TABA is a premium, highly interactive Kanban-style task management application built with a focus on Frontend Engineering excellence. It combines sleek aesthetics with a robust, performant architecture.
 
-
 ## 🚀 Getting Started
 
 ### Prerequisites
