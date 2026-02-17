@@ -70,14 +70,14 @@ export const SettingsView: React.FC = () => {
                 </h2>
             </div>
             <div className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                    <div className="flex-1">
                         <p className="text-sm font-medium text-gray-900 dark:text-white">Reset Everything</p>
-                        <p className="text-xs text-gray-500 mt-1">Delete all projects, tasks, and history. This action cannot be undone.</p>
+                        <p className="text-xs text-gray-500 mt-1 leading-relaxed max-w-md">Delete all projects, tasks, and history. This action cannot be undone and will wipe your entire local workspace.</p>
                     </div>
                     <button 
                         onClick={handleReset}
-                        className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-400 rounded-lg text-sm font-medium transition-colors border border-red-200 dark:border-red-900"
+                        className="w-full sm:w-auto px-6 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-400 rounded-lg text-sm font-semibold transition-all border border-red-200 dark:border-red-900 shadow-sm flex-shrink-0"
                     >
                         Reset Everything
                     </button>
