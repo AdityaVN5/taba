@@ -126,7 +126,9 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleResetBoard = () => {
-      if(confirm("Are you sure you want to reset the entire board? This cannot be undone.")) {
+      const project = projects.find(p => p.id === currentProjectId);
+      const projectName = project ? `"${project.name}"` : 'this project';
+      if(confirm(`Are you sure you want to reset all tasks in ${projectName}? This cannot be undone.`)) {
           resetBoard();
       }
   }

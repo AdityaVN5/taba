@@ -154,8 +154,13 @@ export const useTaskStore = create<TaskState>()(
       },
 
       resetBoard: () => {
-        set({ tasks: [], projects: [], currentProjectId: null });
-        useActivityLogStore.getState().logActivity('reset', 'Reset the board');
+        const { currentProjectId } = get();
+        if (currentProjectId) {
+          set((state) => ({
+            tasks: state.tasks.filter((t) => t.projectId !== currentProjectId),
+          }));
+          useActivityLogStore.getState().logActivity('reset', 'Reset tasks in the current project');
+        }
       },
     }),
     {
