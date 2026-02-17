@@ -44,6 +44,7 @@ interface TaskState {
   deleteTask: (id: string) => void;
   moveTask: (id: string, newStatus: TaskStatus) => void;
   resetBoard: () => void;
+  resetAllData: () => void;
 }
 
 export const useTaskStore = create<TaskState>()(
@@ -161,6 +162,11 @@ export const useTaskStore = create<TaskState>()(
           }));
           useActivityLogStore.getState().logActivity('reset', 'Reset tasks in the current project');
         }
+      },
+
+      resetAllData: () => {
+        set({ tasks: [], projects: [], currentProjectId: null });
+        useActivityLogStore.getState().logActivity('reset', 'Reset entire workspace data');
       },
     }),
     {

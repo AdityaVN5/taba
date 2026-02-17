@@ -12,20 +12,32 @@ import { Moon, Sun } from "lucide-react";
 import { FeaturesPage } from "./components/FeaturesPage";
 import { DocsPage } from "./components/DocsPage";
 
+import { useUIStore, Theme } from "./store/useUIStore";
+
 export default function App() {
-  const [darkMode, setDarkMode] = React.useState(false);
+  const { theme, setTheme } = useUIStore();
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
+    const root = window.document.documentElement;
+    
+    if (theme === 'system') {
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.classList.toggle('dark', systemTheme === 'dark');
+      
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = (e: MediaQueryListEvent) => {
+        root.classList.toggle('dark', e.matches);
+      };
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
     } else {
-      document.documentElement.classList.remove("dark");
+      root.classList.toggle('dark', theme === 'dark');
     }
-  }, [darkMode]);
+  }, [theme]);
 
   return (
     <BrowserRouter>
-      <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark' : ''}`}>
+      <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'dark' : ''}`}>
         <Routes>
           <Route path="/" element={
             <div className="min-h-screen flex flex-col items-center justify-start p-4 sm:p-8 transition-colors duration-300 bg-gray-50 dark:bg-black overflow-y-auto">
@@ -82,11 +94,11 @@ export default function App() {
 
         {/* Dark Mode Toggle */}
         <button
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           className="fixed bottom-6 right-6 p-3 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-accent-yellow shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-110 transition-transform duration-200 z-50"
           aria-label="Toggle Dark Mode"
         >
-          {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+          {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
         </button>
       </div>
     </BrowserRouter>

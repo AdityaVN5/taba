@@ -1,17 +1,24 @@
 import React from 'react';
 import { useTaskStore } from '../store/useTaskStore';
+import { useUIStore, Theme } from '../store/useUIStore';
 import { Trash2, Moon, Sun, Monitor, AlertTriangle } from 'lucide-react';
 
 export const SettingsView: React.FC = () => {
-  const resetBoard = useTaskStore((state) => state.resetBoard);
+  const resetAllData = useTaskStore((state) => state.resetAllData);
+  const { theme, setTheme } = useUIStore();
 
   const handleReset = () => {
-    if (confirm('Are you sure you want to completely, irreversibly wipe all data?')) {
-      resetBoard();
-      alert('Board reset complete.');
-      window.location.reload(); 
+    if (confirm('Are you sure you want to completely, irreversibly wipe ALL projects and tasks? This cannot be undone.')) {
+      resetAllData();
+      alert('Global reset complete. Your workspace is now empty.');
     }
   };
+
+  const themeOptions: { id: Theme; icon: any; label: string }[] = [
+    { id: 'light', icon: Sun, label: 'Light' },
+    { id: 'dark', icon: Moon, label: 'Dark' },
+    { id: 'system', icon: Monitor, label: 'System' },
+  ];
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -31,19 +38,26 @@ export const SettingsView: React.FC = () => {
                          <p className="text-sm font-medium text-gray-900 dark:text-white">Theme</p>
                          <p className="text-xs text-gray-500 mt-1">Customize how TABA Discovery looks on your device.</p>
                      </div>
-                     <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
-                         <button className="p-2 rounded-md bg-white dark:bg-gray-600 shadow-sm">
-                             <Sun size={16} />
-                         </button>
-                         <button className="p-2 rounded-md text-gray-500 dark:text-gray-400">
-                             <Moon size={16} />
-                         </button>
-                          <button className="p-2 rounded-md text-gray-500 dark:text-gray-400">
-                             <Monitor size={16} />
-                         </button>
+                     <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg gap-1">
+                         {themeOptions.map((opt) => (
+                             <button
+                                key={opt.id}
+                                onClick={() => setTheme(opt.id)}
+                                className={`p-2 rounded-md transition-all ${
+                                    theme === opt.id 
+                                    ? 'bg-white dark:bg-gray-600 shadow-sm text-gray-900 dark:text-white' 
+                                    : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                                }`}
+                                title={opt.label}
+                             >
+                                 <opt.icon size={16} />
+                             </button>
+                         ))}
                      </div>
                  </div>
-                 <p className="text-xs text-gray-400 mt-4 italic">Theme switching is currently synced with your system preferences or manual toggle in the navbar.</p>
+                 <p className="text-xs text-gray-400 mt-4 italic">
+                    {theme === 'system' ? 'Standardized to your system preferences.' : `Set to ${theme} mode.`}
+                 </p>
             </div>
         </section>
 
@@ -58,7 +72,7 @@ export const SettingsView: React.FC = () => {
             <div className="p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Reset Workspace</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Reset Everything</p>
                         <p className="text-xs text-gray-500 mt-1">Delete all projects, tasks, and history. This action cannot be undone.</p>
                     </div>
                     <button 
