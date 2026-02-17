@@ -5,6 +5,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Zustand](https://img.shields.io/badge/Zustand-5.0-black?logo=react&logoColor=white)](https://github.com/pmndrs/zustand)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
 [![Live Site](https://img.shields.io/badge/Live-Demo-brightgreen?logo=netlify&logoColor=white)](https://taba-app.netlify.app/)
 [![Watch Demo](https://img.shields.io/badge/Watch-Demo-red?logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1wF1Z6EgvTC_4UOdtGeiDUL6PaAB_GlRI/view?usp=sharing)
 

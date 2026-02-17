@@ -1,9 +1,11 @@
-import React from 'react';
-import { Play } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Hero: React.FC = () => {
   const navigate = useNavigate();
+  const [showVideoModal, setShowVideoModal] = useState(false);
+
   return (
     <main className="flex-grow flex flex-col items-center justify-center text-center px-4 sm:px-6 py-12 md:py-20 relative z-10 w-full max-w-4xl mx-auto mt-8 md:mt-0">
       
@@ -32,13 +34,44 @@ export const Hero: React.FC = () => {
         >
           Get Started for Free
         </button>
-        <button className="w-full sm:w-auto px-8 py-4 glass-nav hover:bg-white/40 text-gray-900 dark:text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2 group">
+        <button 
+          onClick={() => setShowVideoModal(true)}
+          className="w-full sm:w-auto px-8 py-4 glass-nav hover:bg-white/40 text-gray-900 dark:text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2 group"
+        >
           <span className="p-1 rounded-full border border-gray-900/10 dark:border-white/20 group-hover:bg-white/20 transition-colors">
              <Play size={18} fill="currentColor" className="text-gray-900 dark:text-white" />
           </span>
           Watch Video
         </button>
       </div>
+
+      {/* Video Modal */}
+      {showVideoModal && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+          onClick={() => setShowVideoModal(false)}
+        >
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+          <div 
+            className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setShowVideoModal(false)}
+              className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors border border-white/10"
+            >
+              <X size={24} />
+            </button>
+            <video 
+              src="/demo-video.mp4" 
+              className="w-full h-full object-contain"
+              autoPlay 
+              controls
+              playsInline
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 };
